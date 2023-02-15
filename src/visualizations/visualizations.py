@@ -23,39 +23,34 @@ def plot_count_linechart(df: pd.DataFrame, file_name) -> None:
     :param df: pd.DataFrame: the dataframe to compute the correlation matrix from.
     :return: None
     """
-    # print(df.info())
-    plt.figure(figsize=(12, 10))
-    # sns.lineplot(x=df['month'].astype(str), y=df['sentiment_score'], hue=df['bins'])
-    sns.lineplot(x=df['month'].dt.year, y=df['sentiment_score'])
-    # Setting Ticks
 
+    # df["month"] = df["month"].dt.strftime('%Y-%m')
+    df["year"] = df["month"].dt.year
+
+    # Mean line plot
+    plt.figure(figsize=(12, 10))
+    sns.lineplot(x='year', y='sentiment_score', data=df)
+    # Setting Ticks
     plt.tick_params(axis='x', labelsize=5, rotation=90)
     plt.tight_layout()
-
-    # Display
-
-    # plt.show()
 
     plt.savefig(Path(plot_path, f'{file_name}_lineplot.png'))
     plt.close()
 
-    # df["month"] = df["month"].dt.strftime('%Y-%m')
+    # Create a figure with multiple subplots
+    fig, ax = plt.subplots()
 
-    # print(df['Negative'])
+    # Plot first sns.linplot on the first subplot
+    sns.lineplot(x="year", y="Negative", data=df, ax=ax)
 
-    # transform the dataframe to long format using melt()
-    data_melt = pd.melt(df, id_vars=['month'], value_vars=['Negative', 'Neutral', 'Positive'])
+    # Plot second sns.linplot on the second subplot
+    sns.lineplot(x="year", y="Positive", data=df, ax=ax)
 
-    print(data_melt)
+    # Show the plot
+    plt.show()
 
-    # create a plot using seaborn
-    # sns.lineplot(data=data_melt, x='month', y='value', hue='variable')
-
-    plt.plot(x=df['month'].dt.year, y=df['Positive'], ci= None)
-    plt.plot(x=df['month'].dt.year, y=df['Neutral'], ci= None)
-    plt.plot(x=df['month'].dt.year, y=df['Negative'], ci= None)
-    plt.savefig(Path(plot_path, f'{file_name}_countplot.png'))
-    plt.close()
+    # fig.savefig(Path(plot_path, f'{file_name}_countplot.png'))
+    # plt.close()
 
 
 def plot_frequency_linechart(df: pd.DataFrame, news_type: Literal["positive", "negative", "neutral"]) -> None:
@@ -66,17 +61,6 @@ def plot_frequency_linechart(df: pd.DataFrame, news_type: Literal["positive", "n
 
 
 def plot_word_cloud(df: pd.DataFrame, file_name) -> None:
-    # # Start with one review:
-    # text = df.CleanedText[1]
-    #
-    # # Create and generate a word cloud image:
-    # wordcloud = WordCloud(max_font_size=50, max_words=100, background_color="white").generate(text)
-    #
-    # # Display the generated image:
-    # plt.imshow(wordcloud, interpolation='bilinear')
-    # plt.axis("off")
-    # plt.show()
-
     for index, row in df.iterrows():
         month = row['month']
         text = row['CleanedText']
@@ -135,7 +119,8 @@ def main() -> None:
         # assuming your DataFrame is called df and the numerical feature is called 'num_feature'
         bin_labels = ['Negative', 'Neutral', 'Positive']
         num_quartiles = 3
-        df['bins'] = pd.qcut(df['sentiment_score'], q=num_quartiles, labels=bin_labels)
+        # df['bins'] = pd.qcut(df['sentiment_score'], q=num_quartiles, labels=bin_labels)
+        df['bins'] = pd.cut(df['sentiment_score'], bins=[-1, -0.5, 0.5, 1], labels=bin_labels)
 
         dummy = pd.get_dummies(df['bins'])
 
@@ -147,10 +132,6 @@ def main() -> None:
         # group by month and aggregate the data as needed
         df_grouped = df.groupby('month').agg({'CleanedText': 'sum', 'sentiment_score': 'mean', 'Negative': 'count',
                                               'Neutral': 'count', 'Positive': 'count'}).reset_index()
-
-        # df_grouped["month"] = df_grouped["month"].dt.strftime('%Y-%m')
-
-
 
         # plot_word_cloud(df_grouped, csv_file)
 
