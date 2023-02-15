@@ -41,10 +41,4 @@ if __name__ == '__main__':
 
             # create csv file
             df = pd.DataFrame(all_posts)
-            df.to_csv(f'data/data_{q}.csv', sep=',', index=False)
-
-            # # create json file
-            # json_string = json.dumps(all_posts)
-            # jsonFile = open(f'data/data_key_{q}.json', "w")
-            # jsonFile.write(json_string)
-            # jsonFile.close()
+            df.to_csv(f'data/data_{q}.csv', sep=',', index=True, index_label="row_id")
