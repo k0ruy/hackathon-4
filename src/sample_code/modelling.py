@@ -4,7 +4,8 @@ import pandas as pd
 # sklearn modules
 from sklearn.model_selection import train_test_split
 from sklearn.pipeline import Pipeline
-from sklearn.naive_bayes import MultinomialNB  # classifier
+from sklearn.naive_bayes import MultinomialNB # classifier
+from sklearn.ensemble import RandomForestClassifier
 from sklearn.metrics import accuracy_score
 
 from sklearn.feature_extraction.text import TfidfVectorizer, CountVectorizer
@@ -76,12 +77,12 @@ def classify(df):
 
 if __name__ == '__main__':
     # load data
-    data = pd.read_csv("../../data/nyt_data/C_Bahrainnyt.csv")
+    data = pd.read_csv("../../data/reddit_data/data_Bahrain.csv")
 
     data = classify(data)
 
     # clean the review
-    data["clean_title"] = data["CleanedText"].apply(text_cleaning)
+    data["clean_title"] = data["Title"].apply(text_cleaning)
 
     # split features and target from  data
     X = data["clean_title"]
@@ -98,11 +99,13 @@ if __name__ == '__main__':
 
     sentiment_classifier = Pipeline(steps=[
         ('pre_processing', TfidfVectorizer(lowercase=False)),
-        ('naive_bayes', MultinomialNB())
+        ('rf', RandomForestClassifier())
     ])
 
     sentiment_classifier.fit(X_train, y_train)
 
     y_preds = sentiment_classifier.predict(X_test)
 
-    print(accuracy_score(y_test, y_preds))
+    accuracy_score = accuracy_score(y_test, y_preds)
+    print(f"{accuracy_score=}")
+
