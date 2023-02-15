@@ -23,13 +23,13 @@ def plot_count_linechart(df: pd.DataFrame, file_name) -> None:
     :param df: pd.DataFrame: the dataframe to compute the correlation matrix from.
     :return: None
     """
-    print(df.info())
+    # print(df.info())
     plt.figure(figsize=(12, 10))
-    # sns.lineplot(x=df['month'].astype(str), y=df['sentiment_score'], hue=df['cat_feature'])
-    sns.lineplot(x=df['month'].dt.year, y=df['sentiment_score'], hue=df['cat_feature'])
+    # sns.lineplot(x=df['month'].astype(str), y=df['sentiment_score'], hue=df['bins'])
+    sns.lineplot(x=df['month'].dt.year, y=df['sentiment_score'])
     # Setting Ticks
 
-    plt.tick_params(axis='x', labelsize=15, rotation=90)
+    plt.tick_params(axis='x', labelsize=5, rotation=90)
     plt.tight_layout()
 
     # Display
@@ -37,6 +37,18 @@ def plot_count_linechart(df: pd.DataFrame, file_name) -> None:
     # plt.show()
 
     plt.savefig(Path(plot_path, f'{file_name}_lineplot.png'))
+    plt.close()
+
+    df["month"] = df["month"].dt.strftime('%Y-%m')
+
+    # transform the dataframe to long format using melt()
+    data_melt = pd.melt(df, id_vars=['month'], value_vars=['Negative', 'Neutral', 'Positive'])
+
+    # create a plot using seaborn
+    sns.lineplot(data=data_melt, x='month', y='value', hue='variable')
+
+    # sns.lineplot(x=df['month'].astype(str), y=df['Positive'])
+    plt.savefig(Path(plot_path, f'{file_name}_countplot.png'))
     plt.close()
 
 
@@ -98,7 +110,7 @@ def main() -> None:
     '''
 
     # get a list of files in the folder
-    file_list = os.listdir("../clean_data")
+    file_list = os.listdir("../../data/nyt_data")
 
     # filter the list to include only CSV files
     csv_files = [f for f in file_list if f.endswith('.csv')]
@@ -106,22 +118,33 @@ def main() -> None:
     # loop through the list and read the CSV files, storing their names and data
     data = []
     for csv_file in csv_files:
-        file_path = os.path.join("../clean_data", csv_file)
+        file_path = os.path.join("../../data/nyt_data", csv_file)
         df = pd.read_csv(file_path)
-        print(df.info())
+        # print(df.info())
 
         # assuming your dataframe is called df
         df['pub_date'] = pd.to_datetime(df['pub_date'])
         df['month'] = df['pub_date'].dt.to_period('M')
 
+        # assuming your DataFrame is called df and the numerical feature is called 'num_feature'
+        bin_labels = ['Negative', 'Neutral', 'Positive']
+        num_quartiles = 3
+        df['bins'] = pd.qcut(df['sentiment_score'], q=num_quartiles, labels=bin_labels)
+
+        dummy = pd.get_dummies(df['bins'])
+
+        # concatenate the original dataframe with the dummy variables
+        df = pd.concat([df, dummy], axis=1)
+
+        print(df.info())
+
         # group by month and aggregate the data as needed
-        df_grouped = df.groupby('month').agg({'CleanedText': 'sum', 'sentiment_score': 'mean'}).reset_index()
+        df_grouped = df.groupby('month').agg({'CleanedText': 'sum', 'sentiment_score': 'mean', 'Negative': 'count',
+                                              'Neutral': 'count', 'Positive': 'count'}).reset_index()
 
         # df_grouped["month"] = df_grouped["month"].dt.strftime('%Y-%m')
 
-        # assuming your DataFrame is called df and the numerical feature is called 'num_feature'
-        # num_quartiles = 4
-        # df_grouped['cat_feature'] = pd.qcut(df_grouped['sentiment_score'], q=num_quartiles, labels=False)
+
 
         # plot_word_cloud(df_grouped, csv_file)
 
