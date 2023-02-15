@@ -16,7 +16,7 @@ def sentiment_nyt():
                 temp['row_id'] = temp['index'].copy()
                 temp.drop("index", axis=1, inplace=True)
             elif 'row_id' in temp.columns:
-                sentiment_analysis(file=temp, column="CleanedText", name=f)  # si ferma col lebanon non so perche
+                sentiment_analysis(file=temp, column="CleanedText", name=f)
 
 
 def sentiment_reddit():

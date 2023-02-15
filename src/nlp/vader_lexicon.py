@@ -25,10 +25,10 @@ def sentiment_analysis(file, column: str, name=""):
     # create a new data frame with "id" and "comment" fields
     df_subset = df[['row_id', column]].copy()
     # data clean-up
-    # remove all non-aphabet characters
-    df_subset[column] = df_subset[column].str.replace("[^a-zA-Z#]", " ")
+    # remove all non-aphabet characters, also making sure it is all string and not numbers
+    df_subset[column] = df_subset[column].str.replace("[^a-zA-Z#]", " ").astype(str)
     # covert to lower-case
-    df_subset[column] = df_subset[column].str.casefold()
+    df_subset[column] = df_subset[column].str.casefold().astype(str)
 
     df1 = pd.DataFrame()
     df1['row_id'] = ['99999999999']
@@ -37,7 +37,7 @@ def sentiment_analysis(file, column: str, name=""):
 
     # exit if columns already exist in the dataframe
     if any(value in df.columns for value in ["sentiment_type", "sentiment_score"]):
-        return
+        return  # skip files that has already been analyzed
 
     print(f'Processing sentiment analysis for file {f.split("/")[-1]}...')
     sid = SentimentIntensityAnalyzer()
