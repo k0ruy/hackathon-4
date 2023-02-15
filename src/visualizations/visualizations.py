@@ -39,15 +39,21 @@ def plot_count_linechart(df: pd.DataFrame, file_name) -> None:
     plt.savefig(Path(plot_path, f'{file_name}_lineplot.png'))
     plt.close()
 
-    df["month"] = df["month"].dt.strftime('%Y-%m')
+    # df["month"] = df["month"].dt.strftime('%Y-%m')
+
+    # print(df['Negative'])
 
     # transform the dataframe to long format using melt()
     data_melt = pd.melt(df, id_vars=['month'], value_vars=['Negative', 'Neutral', 'Positive'])
 
-    # create a plot using seaborn
-    sns.lineplot(data=data_melt, x='month', y='value', hue='variable')
+    print(data_melt)
 
-    # sns.lineplot(x=df['month'].astype(str), y=df['Positive'])
+    # create a plot using seaborn
+    # sns.lineplot(data=data_melt, x='month', y='value', hue='variable')
+
+    plt.plot(x=df['month'].dt.year, y=df['Positive'], ci= None)
+    plt.plot(x=df['month'].dt.year, y=df['Neutral'], ci= None)
+    plt.plot(x=df['month'].dt.year, y=df['Negative'], ci= None)
     plt.savefig(Path(plot_path, f'{file_name}_countplot.png'))
     plt.close()
 
