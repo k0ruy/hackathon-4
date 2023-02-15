@@ -22,7 +22,7 @@ if __name__ == '__main__':
     sub = 'worldnews'  # subreddit
     sort = "new"
     limit = 50
-    for idx, q in enumerate(topics):
+    for q in topics:
         top_posts = r.subreddit(sub).search(q, sort=sort, limit=limit)
         total_posts = list()
         for post in top_posts:
@@ -38,10 +38,10 @@ if __name__ == '__main__':
 
             # create csv file
             df = pd.DataFrame(total_posts)
-            df.to_csv(f'data/data_key_{idx}.csv', sep=',', index=False)
+            df.to_csv(f'data/data_key_{q}.csv', sep=',', index=False)
 
             # create json file
             json_string = json.dumps(total_posts)
-            jsonFile = open(f'data/data_key_{idx}.json', "w")
+            jsonFile = open(f'data/data_key_{q}.json', "w")
             jsonFile.write(json_string)
             jsonFile.close()
