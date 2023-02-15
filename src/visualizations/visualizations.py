@@ -1,6 +1,6 @@
 # Data manipulation:
 from pathlib import Path
-
+import os
 # Plotting:
 import matplotlib.pyplot as plt
 import numpy as np
@@ -55,7 +55,7 @@ def plot_frequency_linechart(df: pd.DataFrame, news_type: Literal["positive", "n
                   colors=color_map)
 
 
-def plot_word_cloud(df: pd.DataFrame) -> None:
+def plot_word_cloud(df: pd.DataFrame, file_name) -> None:
     # # Start with one review:
     # text = df.CleanedText[1]
     #
@@ -79,11 +79,13 @@ def plot_word_cloud(df: pd.DataFrame) -> None:
         plt.imshow(wordcloud, interpolation='bilinear')
         plt.axis('off')
         plt.title(month)
-        plt.savefig(Path(plot_path, f'{month}_wordcloud.png'))
+        plt.savefig(Path(plot_path, f'{month}_{file_name}_wordcloud.png'))
         plt.close()
 
 
 def main() -> None:
+    '''
+    # Only egypt for the moment
     data_path: Path = Path(Path(__file__).parent.parent, "clean_data", "C_Egyptnyt.csv")
     df = pd.read_csv(data_path)
     print(df.pub_date)
@@ -97,10 +99,33 @@ def main() -> None:
 
     print(df_grouped.info())
 
-    # df_grouped.to_csv("bho.csv")
-
     # Plot the word cloud:
-    plot_word_cloud(df_grouped)
+    # plot_word_cloud(df_grouped)
+    '''
+
+    folder_path = "../clean_data"
+
+    # get a list of files in the folder
+    file_list = os.listdir(folder_path)
+
+    # filter the list to include only CSV files
+    csv_files = [f for f in file_list if f.endswith('.csv')]
+
+    # loop through the list and read the CSV files, storing their names and data
+    data = []
+    for csv_file in csv_files:
+        file_path = os.path.join(folder_path, csv_file)
+        df = pd.read_csv(file_path)
+
+        # assuming your dataframe is called df
+        df['pub_date'] = pd.to_datetime(df['pub_date'])
+        df['month'] = df['pub_date'].dt.to_period('M')
+
+        # group by month and aggregate the data as needed
+        df_grouped = df.groupby('month').agg({'CleanedText': 'sum'}).reset_index()
+
+        # data.append({'file_name': csv_file, 'data': df})
+        plot_word_cloud(df_grouped, csv_file)
 
 
 # Driver:
