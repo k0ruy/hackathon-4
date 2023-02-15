@@ -83,3 +83,14 @@ fabric.properties
 /.idea/inspectionProfiles/profiles_settings.xml
 /.idea/inspectionProfiles/Project_Default.xml
 /.idea/vcs.xml
+/data/nyt_data/C_Bahrainnyt.csv
+/data/nyt_data/C_Cyprusnyt.csv
+/data/nyt_data/C_Jordannyt.csv
+/data/nyt_data/C_Kuwaitnyt.csv
+/data/nyt_data/C_Lebanonnyt.csv
+/data/nyt_data/C_Omannyt.csv
+/data/nyt_data/C_Palestinenyt.csv
+/data/nyt_data/C_TEST_Russianyt.csv
+/data/nyt_data/C_TEST_USnyt.csv
+/data/nyt_data/C_United Arab Emiratesnyt.csv
+/data/nyt_data/C_Yemennyt.csv
