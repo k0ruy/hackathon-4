@@ -77,12 +77,19 @@ def classify(df):
 
 if __name__ == '__main__':
     # load data
-    data = pd.read_csv("../../data/reddit_data/data_Bahrain.csv")
+
+    folder = "reddit_data"
+    data = pd.read_csv(f"../../data/{folder}/data_Bahrain.csv")
 
     data = classify(data)
 
     # clean the review
-    data["clean_title"] = data["Title"].apply(text_cleaning)
+    if folder == "reddit_data":
+        data["clean_title"] = data["Title"].apply(text_cleaning)
+    elif folder == "bbc_data":
+        data["clean_title"] = data["content"].apply(text_cleaning)
+    elif folder == "nyt_data":
+        data["clean_title"] = data["CleanedText"].apply(text_cleaning)
 
     # split features and target from  data
     X = data["clean_title"]
