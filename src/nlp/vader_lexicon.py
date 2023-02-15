@@ -8,15 +8,20 @@ import warnings
 warnings.filterwarnings('ignore')
 
 
-def sentiment_analysis(f, column: str):
+def sentiment_analysis(file, column: str, name=""):
     """
     adds sentiment analysis to the file passed
+    :param f: temporary parameter if a dataframe is passed
     :param column: the column to process
-    :param f: the file to process
+    :param file: the file to process, dataframe or filename
     :return: the file with added sentiment columns
     """
-
-    df = pd.read_csv(f)
+    if not isinstance(file, pd.DataFrame):
+        df = pd.read_csv(file)
+        f = file
+    else:
+        df = file.copy()
+        f = name
     # create a new data frame with "id" and "comment" fields
     df_subset = df[['row_id', column]].copy()
     # data clean-up
@@ -30,6 +35,10 @@ def sentiment_analysis(f, column: str):
     df1['sentiment_type'] = 'NA999NA'
     df1['sentiment_score'] = 0
 
+    # exit if columns already exist in the dataframe
+    if any(value in df.columns for value in ["sentiment_type", "sentiment_score"]):
+        return
+
     print(f'Processing sentiment analysis for file {f.split("/")[-1]}...')
     sid = SentimentIntensityAnalyzer()
     t_df = df1
@@ -39,8 +48,6 @@ def sentiment_analysis(f, column: str):
             df1['row_id'] = row[0]
             df1['sentiment_type'] = key
             df1['sentiment_score'] = value
-            if 'sentiment_type' in df or 'sentiment_score'  in df:
-                continue
             t_df = t_df.append(df1)
     # remove dummy row with row_id = 99999999999
     t_df_cleaned = t_df[t_df.row_id != '99999999999']
