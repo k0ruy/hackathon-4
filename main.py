@@ -20,14 +20,15 @@ def sentiment_nyt():
 
 
 def sentiment_reddit():
-    for file in sorted(os.listdir("src/data_collection/data")):
-        f = os.path.join("src/data_collection/data", file)
+    for file in sorted(os.listdir("data")):
+        f = os.path.join("data", file)
         # checking if it is a file
         if os.path.isfile(f):
             if os.path.isfile(f):
-                sentiment_analysis(file=f, column="Title")
+                if not f.endswith("DS_Store"):
+                    sentiment_analysis(file=f, column="Title")
 
 
 if __name__ == '__main__':
-    sentiment_nyt()
-    # sentiment_reddit()
+    # sentiment_nyt()
+    sentiment_reddit()

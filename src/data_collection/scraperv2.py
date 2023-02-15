@@ -10,10 +10,10 @@ if __name__ == '__main__':
 
     # checking if the directory demo_folder2
     # exist or not.
-    if not os.path.isdir("data"):
+    if not os.path.isdir("../../data"):
         # if the demo_folder2 directory is
         # not present then create it.
-        os.makedirs("data")
+        os.makedirs("../../data")
 
     r = praw.Reddit(client_id="hpLseXfJUivTmevTSPSrQQ",
                     client_secret="GM9ROBDjEpKrhET5zajLLaO4ozl5cw",
@@ -41,4 +41,4 @@ if __name__ == '__main__':
 
             # create csv file
             df = pd.DataFrame(all_posts)
-            df.to_csv(f'data/data_{q}.csv', sep=',', index=True, index_label="row_id")
+            df.to_csv(f'../../data/data_{q}.csv', sep=',', index=True, index_label="row_id")

@@ -11,13 +11,13 @@ warnings.filterwarnings('ignore')
 def sentiment_analysis(file, column: str, name=""):
     """
     adds sentiment analysis to the file passed
-    :param f: temporary parameter if a dataframe is passed
+    :param name: temporary parameter if a dataframe is passed
     :param column: the column to process
     :param file: the file to process, dataframe or filename
     :return: the file with added sentiment columns
     """
     if not isinstance(file, pd.DataFrame):
-        df = pd.read_csv(file)
+        df = pd.read_csv(file, encoding_errors='ignore', on_bad_lines='skip')
         f = file
     else:
         df = file.copy()
