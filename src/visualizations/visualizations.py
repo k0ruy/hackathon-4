@@ -1,6 +1,7 @@
 # Data manipulation:
 from pathlib import Path
 import os
+from datetime import datetime
 # Plotting:
 import matplotlib.pyplot as plt
 import numpy as np
@@ -15,37 +16,28 @@ plot_path: Path = Path(Path(__file__).parent, "plots")
 
 
 # Functions:
-def plot_count_linechart(df: pd.DataFrame, news_type: Literal["positive", "negative", "neutral"]) -> None:
+# def plot_count_linechart(df: pd.DataFrame, news_type: Literal["positive", "negative", "neutral"]) -> None:
+def plot_count_linechart(df: pd.DataFrame, file_name) -> None:
     """
     Plot the correlation matrix.
     :param df: pd.DataFrame: the dataframe to compute the correlation matrix from.
     :return: None
     """
-    sns.lineplot(data=df, x="year", y="passengers", hue="month")
+    print(df.info())
+    plt.figure(figsize=(12, 10))
+    # sns.lineplot(x=df['month'].astype(str), y=df['sentiment_score'], hue=df['cat_feature'])
+    sns.lineplot(x=df['month'].dt.year, y=df['sentiment_score'], hue=df['cat_feature'])
+    # Setting Ticks
 
-    # # select only the numerical features:
-    # numerical_features = df.select_dtypes(exclude='category').columns
-    # # compute the correlation matrix:
-    # corr_matrix = df[numerical_features].corr('spearman')
-    # # mask the upper triangle:
-    # mask = np.triu(np.ones_like(corr_matrix, dtype=bool))
-    # # get the y_tick:
-    # x_tick = corr_matrix.index
-    # # replace the last y_tick label with an empty string:
-    # y_tick = [col.replace('limit_bal', '') for col in x_tick]
-    #
-    # # plot the correlation matrix:
-    # plt.figure(figsize=(20, 20))
-    # sns.heatmap(corr_matrix, annot=True, cbar=True, cmap='coolwarm', mask=mask,
-    #             fmt='.2f', annot_kws={'size': 10}, linewidths=0.5,
-    #             xticklabels=x_tick[:-1], yticklabels=y_tick)
-    #
-    # # Annotate the correlation matrix:
-    # plt.title('Correlation Matrix with Spearman Correlation')
-    # # Save the plot:
-    # plot_path.mkdir(parents=True, exist_ok=True)
-    # plt.savefig(Path(plot_path, 'correlation_matrix.png'))
-    # plt.close()
+    plt.tick_params(axis='x', labelsize=15, rotation=90)
+    plt.tight_layout()
+
+    # Display
+
+    # plt.show()
+
+    plt.savefig(Path(plot_path, f'{file_name}_lineplot.png'))
+    plt.close()
 
 
 def plot_frequency_linechart(df: pd.DataFrame, news_type: Literal["positive", "negative", "neutral"]) -> None:
@@ -91,6 +83,8 @@ def main() -> None:
     print(df.pub_date)
 
     # assuming your dataframe is called df
+
+    
     df['pub_date'] = pd.to_datetime(df['pub_date'])
     df['month'] = df['pub_date'].dt.to_period('M')
 
@@ -103,10 +97,8 @@ def main() -> None:
     # plot_word_cloud(df_grouped)
     '''
 
-    folder_path = "../clean_data"
-
     # get a list of files in the folder
-    file_list = os.listdir(folder_path)
+    file_list = os.listdir("../clean_data")
 
     # filter the list to include only CSV files
     csv_files = [f for f in file_list if f.endswith('.csv')]
@@ -114,18 +106,28 @@ def main() -> None:
     # loop through the list and read the CSV files, storing their names and data
     data = []
     for csv_file in csv_files:
-        file_path = os.path.join(folder_path, csv_file)
+        file_path = os.path.join("../clean_data", csv_file)
         df = pd.read_csv(file_path)
+        print(df.info())
 
         # assuming your dataframe is called df
         df['pub_date'] = pd.to_datetime(df['pub_date'])
         df['month'] = df['pub_date'].dt.to_period('M')
 
         # group by month and aggregate the data as needed
-        df_grouped = df.groupby('month').agg({'CleanedText': 'sum'}).reset_index()
+        df_grouped = df.groupby('month').agg({'CleanedText': 'sum', 'sentiment_score': 'mean'}).reset_index()
 
-        # data.append({'file_name': csv_file, 'data': df})
-        plot_word_cloud(df_grouped, csv_file)
+        # df_grouped["month"] = df_grouped["month"].dt.strftime('%Y-%m')
+
+        # assuming your DataFrame is called df and the numerical feature is called 'num_feature'
+        # num_quartiles = 4
+        # df_grouped['cat_feature'] = pd.qcut(df_grouped['sentiment_score'], q=num_quartiles, labels=False)
+
+        # plot_word_cloud(df_grouped, csv_file)
+
+        plot_count_linechart(df_grouped, csv_file)
+
+    # df['Publish_Date'] = pd.to_datetime(df['Publish_Date'], unit='s')
 
 
 # Driver:
