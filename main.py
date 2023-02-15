@@ -7,15 +7,13 @@ warnings.filterwarnings('ignore')
 
 
 def sentiment_nyt():
-    for file in sorted(os.listdir("data/nyt_data")):
-        f = os.path.join("data/nyt_data", file)
+    for file in sorted(os.listdir("data/nyt_data/cl")):
+        f = os.path.join("data/nyt_data/cl", file)
         # checking if it is a file
         if os.path.isfile(f):
             temp = pd.read_csv(f, encoding_errors="ignore")
-            if 'index' in temp.columns:
-                temp['row_id'] = temp['index'].copy()
-                temp.drop("index", axis=1, inplace=True)
-            elif 'row_id' in temp.columns:
+            temp.rename(columns={temp.columns[0]: "row_id"}, inplace=True)
+            if 'row_id' in temp.columns:
                 sentiment_analysis(file=temp, column="CleanedText", name=f)
 
 
@@ -30,5 +28,5 @@ def sentiment_reddit():
 
 
 if __name__ == '__main__':
-    # sentiment_nyt()
-    sentiment_reddit()
+    sentiment_nyt()
+    # sentiment_reddit()
