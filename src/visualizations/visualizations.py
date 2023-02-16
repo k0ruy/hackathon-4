@@ -33,7 +33,7 @@ def plot_linechart(df: pd.DataFrame, file_name: str) -> None:
     # plt.tick_params(axis='x', labelsize=15, rotation=90)
     plt.tight_layout()
 
-    plt.savefig(Path(plot_path, f'{file_name}_lineplot.png'))
+    #plt.savefig(Path(plot_path, f'{file_name}_lineplot.png'))
     plt.close()
 
 
@@ -50,7 +50,7 @@ def plot_count_linechart(df: pd.DataFrame, file_name: str) -> None:
 
     plt.tight_layout()
 
-    plt.savefig(Path(plot_path, f'{file_name}_countplot.png'))
+    #plt.savefig(Path(plot_path, f'{file_name}_countplot.png'))
     plt.close()
 
 
@@ -94,7 +94,7 @@ def plot_word_cloud(df: pd.DataFrame, file_name) -> None:
         plt.imshow(wordcloud, interpolation='bilinear')
         plt.axis('off')
         plt.title(month)
-        plt.savefig(Path(plot_path, f'{month}_{file_name}_wordcloud.png'))
+        #plt.savefig(Path(plot_path, f'{month}_{file_name}_wordcloud.png'))
         plt.close()
 
 
