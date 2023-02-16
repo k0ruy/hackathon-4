@@ -1,3 +1,5 @@
+# source: https://towardsdatascience.com/how-to-build-and-deploy-an-nlp-model-with-fastapi-part-1-9c1c7030d40
+
 # import important modules
 import numpy as np
 import pandas as pd
@@ -17,6 +19,7 @@ import nltk
 from nltk.corpus import stopwords
 from nltk.stem import WordNetLemmatizer
 import re  # regular expression
+from act_learning import check_preds
 
 # Download dependency
 for dependency in (
@@ -78,8 +81,8 @@ def classify(df):
 if __name__ == '__main__':
     # load data
 
-    folder = "reddit_data"
-    data = pd.read_csv(f"../../data/{folder}/data_Bahrain.csv")
+    folder = "nyt_data"
+    data = pd.read_csv(f"../../data/{folder}/CL_Bahrainnyt.csv")  # be sure to change also file name depending on folder
 
     data = classify(data)
 
@@ -111,8 +114,14 @@ if __name__ == '__main__':
 
     sentiment_classifier.fit(X_train, y_train)
 
-    y_preds = sentiment_classifier.predict(X_test)
+    pred_df = pd.DataFrame()
+    pred_df["y_preds"] = sentiment_classifier.predict(X_test)
+    pred_df['pred_proba'] = list(sentiment_classifier.predict_proba(X_test))
 
-    accuracy_score = accuracy_score(y_test, y_preds)
+    pred_df['annotate_decision'] = pred_df['pred_proba'].apply(check_preds)
+
+    print(pred_df.annotate_decision.value_counts())
+
+    accuracy_score = accuracy_score(y_test, pred_df["y_preds"])
     print(f"{accuracy_score=}")
 

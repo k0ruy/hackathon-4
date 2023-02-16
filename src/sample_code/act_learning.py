@@ -30,7 +30,7 @@ def check_preds(pred_dct, low_th=low_th, high_th=high_th):
         pred_df['annotate_decision'] = pred_df['pred_proba'].apply(check_preds)
     """
 
-    max_val = max(list(pred_dct.values()))
+    max_val = max(pred_dct)
     if max_val <= low_th:
         return 'annotate'
     elif max_val >= high_th:

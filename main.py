@@ -31,6 +31,18 @@ def sentiment_nyt():
                 sentiment_analysis(file=temp, column="CleanedText", name=f)
 
 
+def sentiment_complete():
+    for file in sorted(os.listdir("data/complete")):
+        f = os.path.join("data/complete", file)
+        # checking if it is a file
+        if os.path.isfile(f):
+            temp = pd.read_csv(f, encoding_errors="ignore")
+            temp["row_id"] = temp.index
+            if 'row_id' in temp.columns:
+                temp.reset_index(inplace=True)
+                sentiment_analysis(file=temp, column="CleanedText", name=f)
+
+
 def sentiment_reddit():
     for file in sorted(os.listdir("data")):
         f = os.path.join("data", file)
@@ -43,5 +55,6 @@ def sentiment_reddit():
 
 if __name__ == '__main__':
     # sentiment_nyt()
-    sentiment_bbc()
+    # sentiment_bbc()
+    sentiment_complete()
     # sentiment_reddit()
