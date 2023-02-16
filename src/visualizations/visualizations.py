@@ -25,7 +25,7 @@ def plot_linechart(df: pd.DataFrame, file_name: str) -> None:
 
     # Set axis labels
     plt.xlabel("Year")
-    plt.ylabel("Mean score")
+    plt.ylabel("Sum score")
 
     # Setting Ticks
     # plt.tick_params(axis='x', labelsize=15, rotation=90)
@@ -97,11 +97,9 @@ def plot_word_cloud(df: pd.DataFrame, file_name) -> None:
 
 
 def plot_count_month(df: pd.DataFrame, file_name: str) -> None:
-    # df["month"] = df["month"].dt.strftime('%Y-%m')
-    df["year"] = df["month"].dt.year
     # Mean line plot
     plt.figure(figsize=(12, 10))
-    temp = df['month'].groupby([df.month.dt.month]).agg('count')
+    temp = df['month'].groupby([df.month.dt.year, df.month.dt.month]).agg('count')
 
     # print(temp.columns)
     temp.plot.line()
