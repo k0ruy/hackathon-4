@@ -10,6 +10,8 @@ from wordcloud import WordCloud, STOPWORDS, ImageColorGenerator
 
 
 plot_path: Path = Path(Path(__file__).parent, "plots")
+if not plot_path:
+    plot_path.mkdir(parents=True, exist_ok=True)
 
 
 # Functions:
@@ -24,11 +26,11 @@ def plot_linechart(df: pd.DataFrame, file_name: str) -> None:
 
     # Set axis labels
     plt.xlabel("Year")
-    plt.ylabel("Sum score")
+    plt.ylabel("Mean score")
 
     plt.tight_layout()
 
-    plt.savefig(Path(plot_path, f'{file_name.split(".")[0]}_lineplot.png'))
+    #plt.savefig(Path(plot_path, f'{file_name}_lineplot.png'))
     plt.close()
 
 
@@ -45,7 +47,7 @@ def plot_count_linechart(df: pd.DataFrame, file_name: str) -> None:
 
     plt.tight_layout()
 
-    plt.savefig(Path(plot_path, f'{file_name.split(".")[0]}_countplot.png'))
+    #plt.savefig(Path(plot_path, f'{file_name}_countplot.png'))
     plt.close()
 
 
@@ -72,7 +74,7 @@ def plot_frequency_linechart(df: pd.DataFrame, file_name: str) -> None:
 
     plt.tight_layout()
 
-    plt.savefig(Path(plot_path, f'{file_name.split(".")[0]}_freqplot.png'))
+    plt.savefig(Path(plot_path, f'{file_name}_freqplot.png'))
     plt.close()
 
 
@@ -89,33 +91,11 @@ def plot_word_cloud(df: pd.DataFrame, file_name) -> None:
         plt.imshow(wordcloud, interpolation='bilinear')
         plt.axis('off')
         plt.title(month)
-        plt.savefig(Path(plot_path, f'{month}_{file_name.split(".")[0]}_wordcloud.png'))
+        #plt.savefig(Path(plot_path, f'{month}_{file_name}_wordcloud.png'))
         plt.close()
 
 
-def plot_count_month(df: pd.DataFrame, file_name: str) -> None:
-    # Mean line plot
-    plt.figure(figsize=(12, 10))
-    temp = df['month'].groupby([df.month.dt.year, df.month.dt.month]).agg('count')
-
-    # print(temp.columns)
-    temp.plot.line()
-
-    # Set axis labels
-    plt.xlabel("month")
-    plt.ylabel("count of articles")
-
-    plt.title(file_name)
-
-    plt.savefig(Path(plot_path, f'{file_name.split(".")[0]}_count_articles.png'))
-    plt.close()
-
-
 def main() -> None:
-    # create folder if it does not exist
-    if not os.path.isdir(plot_path):
-        os.makedirs(plot_path)
-
     # get a list of files in the folder
     file_list = os.listdir("../../data/bbc_data")
 
@@ -141,12 +121,11 @@ def main() -> None:
         plot_count_linechart(df, file_name)
 
         plot_frequency_linechart(df, file_name)
-        plot_count_month(df, file_name)
 
         # group by month and aggregate the data as needed
-        # df_grouped = df.groupby('month').agg({'CleanedText': 'sum', 'sentiment_score': 'sum'}).reset_index()
+        df_grouped = df.groupby('month').agg({'CleanedText': 'sum', 'sentiment_score': 'mean'}).reset_index()
 
-        # plot_word_cloud(df_grouped, file_name)
+        plot_word_cloud(df_grouped, file_name)
 
     # df['Publish_Date'] = pd.to_datetime(df['Publish_Date'], unit='s')
 
