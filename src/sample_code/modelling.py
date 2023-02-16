@@ -81,8 +81,8 @@ def classify(df):
 if __name__ == '__main__':
     # load data
 
-    folder = "nyt_data"
-    data = pd.read_csv(f"../../data/{folder}/CL_Bahrainnyt.csv")  # be sure to change also file name depending on folder
+    folder = "complete"
+    data = pd.read_csv(f"../../data/{folder}/CL_BBC_Bahrainnyt_complete.csv")  # be sure to change also file name depending on folder
 
     data = classify(data)
 
@@ -92,6 +92,8 @@ if __name__ == '__main__':
     elif folder == "bbc_data":
         data["clean_title"] = data["content"].apply(text_cleaning)
     elif folder == "nyt_data":
+        data["clean_title"] = data["CleanedText"].apply(text_cleaning)
+    elif folder == "complete":
         data["clean_title"] = data["CleanedText"].apply(text_cleaning)
 
     # split features and target from  data
