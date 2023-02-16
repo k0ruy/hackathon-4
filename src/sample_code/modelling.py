@@ -21,6 +21,8 @@ from nltk.stem import WordNetLemmatizer
 import re  # regular expression
 from act_learning import check_preds
 
+import joblib
+
 # Download dependency
 for dependency in (
         "brown",
@@ -72,7 +74,7 @@ def classify(df):
         (df['sentiment_score'] >= 0.4) & (df['sentiment_score'] < -0.4),
         (df['sentiment_score'] >= 0.4)
     ]
-    PE_Categories = [-1, 0, 1]
+    PE_Categories = ["negative", "neutral", "positive"]
     df['sentiment'] = np.select(PE_Conditions, PE_Categories)
 
     return df
@@ -81,8 +83,8 @@ def classify(df):
 if __name__ == '__main__':
     # load data
 
-    folder = "complete"
-    data = pd.read_csv(f"../../data/{folder}/CL_BBC_Bahrainnyt_complete.csv")  # be sure to change also file name depending on folder
+    folder = "nyt_data"  # [complete, reddit_data, bbc_data, nyt_data]
+    data = pd.read_csv(f"../../data/{folder}/CL_Bahrainnyt.csv")  # be sure to change also file name depending on folder
 
     data = classify(data)
 
@@ -126,4 +128,6 @@ if __name__ == '__main__':
 
     accuracy_score = accuracy_score(y_test, pred_df["y_preds"])
     print(f"{accuracy_score=}")
+
+    joblib.dump(sentiment_classifier, f'sentiment_model_{folder}.pkl')
 

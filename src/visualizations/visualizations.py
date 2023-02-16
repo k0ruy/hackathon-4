@@ -96,6 +96,26 @@ def plot_word_cloud(df: pd.DataFrame, file_name) -> None:
         plt.close()
 
 
+def plot_count_month(df: pd.DataFrame, file_name: str) -> None:
+    # df["month"] = df["month"].dt.strftime('%Y-%m')
+    df["year"] = df["month"].dt.year
+    # Mean line plot
+    plt.figure(figsize=(12, 10))
+    temp = df['month'].groupby([df.month.dt.month]).agg('count')
+
+    # print(temp.columns)
+    temp.plot.line()
+
+    # Set axis labels
+    plt.xlabel("month")
+    plt.ylabel("count of articles")
+
+    plt.title(file_name)
+
+    plt.savefig(Path(plot_path, f'{file_name.split(".")[0]}_count_articles.png'))
+    plt.close()
+
+
 def main() -> None:
     # create folder if it does not exist
     if not os.path.isdir(plot_path):
@@ -126,11 +146,12 @@ def main() -> None:
         plot_count_linechart(df, file_name)
 
         plot_frequency_linechart(df, file_name)
+        plot_count_month(df, file_name)
 
         # group by month and aggregate the data as needed
-        df_grouped = df.groupby('month').agg({'CleanedText': 'sum', 'sentiment_score': 'mean'}).reset_index()
+        # df_grouped = df.groupby('month').agg({'CleanedText': 'sum', 'sentiment_score': 'sum'}).reset_index()
 
-        plot_word_cloud(df_grouped, file_name)
+        # plot_word_cloud(df_grouped, file_name)
 
     # df['Publish_Date'] = pd.to_datetime(df['Publish_Date'], unit='s')
 
