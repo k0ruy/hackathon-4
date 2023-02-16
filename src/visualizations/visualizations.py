@@ -14,7 +14,6 @@ plot_path: Path = Path(Path(__file__).parent, "plots")
 
 # Functions:
 def plot_linechart(df: pd.DataFrame, file_name: str) -> None:
-    # df["month"] = df["month"].dt.strftime('%Y-%m')
     df["year"] = df["month"].dt.year
 
     # Mean line plot
@@ -27,8 +26,6 @@ def plot_linechart(df: pd.DataFrame, file_name: str) -> None:
     plt.xlabel("Year")
     plt.ylabel("Sum score")
 
-    # Setting Ticks
-    # plt.tick_params(axis='x', labelsize=15, rotation=90)
     plt.tight_layout()
 
     plt.savefig(Path(plot_path, f'{file_name.split(".")[0]}_lineplot.png'))
@@ -120,20 +117,20 @@ def main() -> None:
         os.makedirs(plot_path)
 
     # get a list of files in the folder
-    file_list = os.listdir("../../data/nyt_data")
+    file_list = os.listdir("../../data/bbc_data")
 
     # filter the list to include only CSV files
     csv_files = [f for f in file_list if f.endswith('.csv')]
 
     # loop through the list and read the CSV files, storing their names and data
     for csv_file in csv_files:
-        file_path = os.path.join("../../data/nyt_data", csv_file)
+        file_path = os.path.join("../../data/bbc_data", csv_file)
         file_name = csv_file.split('.')[0]
         df = pd.read_csv(file_path)
 
         # assuming your dataframe is called df
-        df['pub_date'] = pd.to_datetime(df['pub_date'])
-        df['month'] = df['pub_date'].dt.to_period('M')
+        df['publishedAt'] = pd.to_datetime(df['publishedAt'])
+        df['month'] = df['publishedAt'].dt.to_period('M')
 
         # assuming your DataFrame is called df and the numerical feature is called 'num_feature'
         bin_labels = ['Negative', 'Neutral', 'Positive']
