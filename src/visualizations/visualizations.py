@@ -91,26 +91,26 @@ def plot_word_cloud(df: pd.DataFrame, file_name) -> None:
         plt.imshow(wordcloud, interpolation='bilinear')
         plt.axis('off')
         plt.title(month)
-        #plt.savefig(Path(plot_path, f'{month}_{file_name}_wordcloud.png'))
+        plt.savefig(Path(plot_path, f'{month}_{file_name}_wordcloud.png'))
         plt.close()
 
 
 def main() -> None:
     # get a list of files in the folder
-    file_list = os.listdir("../../data/bbc_data")
+    file_list = os.listdir("../../data/complete")
 
     # filter the list to include only CSV files
     csv_files = [f for f in file_list if f.endswith('.csv')]
 
     # loop through the list and read the CSV files, storing their names and data
     for csv_file in csv_files:
-        file_path = os.path.join("../../data/bbc_data", csv_file)
+        file_path = os.path.join("../../data/complete", csv_file)
         file_name = csv_file.split('.')[0]
         df = pd.read_csv(file_path)
 
         # assuming your dataframe is called df
-        df['publishedAt'] = pd.to_datetime(df['publishedAt'])
-        df['month'] = df['publishedAt'].dt.to_period('M')
+        df['pub_date'] = pd.to_datetime(df['pub_date'])
+        df['month'] = df['pub_date'].dt.to_period('M')
 
         # assuming your DataFrame is called df and the numerical feature is called 'num_feature'
         bin_labels = ['Negative', 'Neutral', 'Positive']
